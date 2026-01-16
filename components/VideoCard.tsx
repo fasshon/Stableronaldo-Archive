@@ -9,10 +9,25 @@ interface VideoCardProps {
 }
 
 const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
+  console.log('[DEBUG] VideoCard: Component rendering', {
+    videoId: video.id,
+    videoTitle: video.title.substring(0, 50),
+    thumbnail: video.thumbnail,
+    hasOnClick: !!onClick
+  });
+
   return (
     <div 
       className="group cursor-pointer space-y-3"
-      onClick={() => onClick(video)}
+      onClick={() => {
+        console.log('[DEBUG] VideoCard: Card clicked', {
+          videoId: video.id,
+          videoTitle: video.title.substring(0, 50),
+          youtubeId: video.youtubeId
+        });
+        onClick(video);
+        console.log('[DEBUG] VideoCard: onClick callback called');
+      }}
     >
       <div className="relative aspect-video rounded-xl overflow-hidden bg-zinc-800 transition-transform duration-300 group-hover:scale-[1.02]">
         <img 
@@ -20,6 +35,14 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onClick }) => {
           alt={video.title}
           className="w-full h-full object-cover"
           loading="lazy"
+          onLoad={() => console.log('[DEBUG] VideoCard: Thumbnail loaded', video.id)}
+          onError={(e) => {
+            console.error('[DEBUG] VideoCard: Thumbnail failed to load', {
+              videoId: video.id,
+              thumbnail: video.thumbnail,
+              error: e
+            });
+          }}
         />
         <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs font-medium px-1.5 py-0.5 rounded">
           {video.duration}

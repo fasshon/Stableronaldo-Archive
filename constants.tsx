@@ -2,15 +2,20 @@ import { Video, Category } from './types';
 
 
 const formatDuration = (seconds: number): string => {
+  console.log('[DEBUG] constants.tsx: formatDuration called', { seconds });
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = Math.floor(seconds % 60);
-  if (h > 0) return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  return `${m}:${s.toString().padStart(2, '0')}`;
+  const formatted = h > 0 ? `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}` : `${m}:${s.toString().padStart(2, '0')}`;
+  console.log('[DEBUG] constants.tsx: formatDuration result', { seconds, formatted });
+  return formatted;
 };
 
 const extractYoutubeId = (url: string): string => {
-  return url.split('v=')[1] || '';
+  console.log('[DEBUG] constants.tsx: extractYoutubeId called', { url });
+  const id = url.split('v=')[1]?.split('&')[0] || '';
+  console.log('[DEBUG] constants.tsx: extractYoutubeId result', { url, id });
+  return id;
 };
 
 // Raw list provided by the user
@@ -270,9 +275,15 @@ const rawData = [
 
 // Helper to extract a date string "YYYY-MM-DD" from titles
 const parseDateFromTitle = (title: string): string | null => {
+  console.log('[DEBUG] constants.tsx: parseDateFromTitle called', { title: title.substring(0, 50) });
+  
   // Pattern 1: [YYYY-MM-DD]
   const bracketMatch = title.match(/\[(\d{4}-\d{2}-\d{2})\]/);
-  if (bracketMatch) return bracketMatch[1];
+  if (bracketMatch) {
+    const date = bracketMatch[1];
+    console.log('[DEBUG] constants.tsx: parseDateFromTitle - bracket pattern matched', { date });
+    return date;
+  }
 
   // Pattern 2: DD MON
   const monthNames: { [key: string]: string } = {
@@ -285,20 +296,34 @@ const parseDateFromTitle = (title: string): string | null => {
     const month = monthNames[dayMonthMatch[2].toUpperCase()];
     // Heuristic: If it's OCT-DEC, assume 2024. If JAN-SEP, assume 2025.
     const year = parseInt(month) >= 10 ? '2024' : '2025';
-    return `${year}-${month}-${day}`;
+    const date = `${year}-${month}-${day}`;
+    console.log('[DEBUG] constants.tsx: parseDateFromTitle - day/month pattern matched', { date, day, month, year });
+    return date;
   }
 
+  console.warn('[DEBUG] constants.tsx: parseDateFromTitle - no pattern matched', { title: title.substring(0, 50) });
   return null;
 };
 
 // Map and deduplicate (one video per unique date)
 const generateVideos = (): Video[] => {
+  console.log('[DEBUG] constants.tsx: generateVideos called', {
+    rawDataLength: rawData.length
+  });
+
   const channelIcon = "https://static-cdn.jtvnw.net/emoticons/v2/emotesv2_d59671debd614502a569df718016cce8/default/dark/3.0";
   const usedDates = new Set<string>();
   const finalVideos: Video[] = [];
 
   rawData.forEach((item, i) => {
     const youtubeId = extractYoutubeId(item.url);
+    console.log('[DEBUG] constants.tsx: Processing video', {
+      index: i,
+      title: item.title.substring(0, 50),
+      url: item.url,
+      youtubeId,
+      duration: item.duration
+    });
     
     // Use upload_date from raw data if available, otherwise parse from title
     let dateStr: string | null = null;
@@ -316,12 +341,36 @@ const generateVideos = (): Video[] => {
     }
     
     // Skip if no date is found or already used
-    if (!dateStr || usedDates.has(dateStr)) return;
+    if (!dateStr) {
+      console.warn('[DEBUG] constants.tsx: Skipping video - no date found', {
+        index: i,
+        title: item.title.substring(0, 50)
+      });
+      return;
+    }
+    
+    if (usedDates.has(dateStr)) {
+      console.warn('[DEBUG] constants.tsx: Skipping video - duplicate date', {
+        index: i,
+        title: item.title.substring(0, 50),
+        dateStr
+      });
+      return;
+    }
     
     usedDates.add(dateStr);
     const dateObj = new Date(dateStr);
     
-    finalVideos.push({
+    if (isNaN(dateObj.getTime())) {
+      console.error('[DEBUG] constants.tsx: Invalid date object created', {
+        index: i,
+        dateStr,
+        title: item.title.substring(0, 50)
+      });
+      return;
+    }
+    
+    const video = {
       id: `vod-${youtubeId}-${i}`,
       youtubeId: youtubeId,
       title: item.title,
@@ -335,13 +384,34 @@ const generateVideos = (): Video[] => {
       durationSeconds: item.duration,
       category: 'irl',
       description: `Official archive VOD for ${item.title}. Archived on Stable Vods.`
+    };
+    
+    console.log('[DEBUG] constants.tsx: Video created successfully', {
+      id: video.id,
+      youtubeId: video.youtubeId,
+      uploadDate: video.uploadDate,
+      dateStr: video.postedAt
     });
+    
+    finalVideos.push(video);
+  });
+
+  console.log('[DEBUG] constants.tsx: generateVideos complete', {
+    totalVideos: finalVideos.length,
+    usedDatesCount: usedDates.size,
+    skippedCount: rawData.length - finalVideos.length
   });
 
   return finalVideos;
 };
 
+console.log('[DEBUG] constants.tsx: Generating INITIAL_VIDEOS');
 export const INITIAL_VIDEOS: Video[] = generateVideos();
+console.log('[DEBUG] constants.tsx: INITIAL_VIDEOS exported', {
+  count: INITIAL_VIDEOS.length,
+  firstVideo: INITIAL_VIDEOS[0]?.title?.substring(0, 50) || 'none',
+  lastVideo: INITIAL_VIDEOS[INITIAL_VIDEOS.length - 1]?.title?.substring(0, 50) || 'none'
+});
 
 export const CATEGORIES: Category[] = [
   { id: 'all', label: 'All' },

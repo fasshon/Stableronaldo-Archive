@@ -9,63 +9,149 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 const VIDEOS_PER_PAGE = 30; // 5 columns x 6 rows
 
 const App: React.FC = () => {
+  console.log('[DEBUG] App.tsx: Component rendering');
+  
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('date');
   const [currentPage, setCurrentPage] = useState(1);
 
+  console.log('[DEBUG] App.tsx: Initial state -', {
+    activeCategory,
+    selectedVideo: selectedVideo?.id || null,
+    searchQuery,
+    sortBy,
+    currentPage
+  });
+
   useEffect(() => {
+    console.log('[DEBUG] App.tsx: useEffect triggered - filters changed', {
+      searchQuery,
+      activeCategory,
+      sortBy
+    });
     setCurrentPage(1);
+    console.log('[DEBUG] App.tsx: Reset currentPage to 1');
   }, [searchQuery, activeCategory, sortBy]);
 
   const filteredAndSortedVideos = useMemo(() => {
+    console.log('[DEBUG] App.tsx: useMemo - filtering and sorting videos', {
+      totalVideos: INITIAL_VIDEOS.length,
+      searchQuery,
+      activeCategory,
+      sortBy
+    });
+    
     let result = INITIAL_VIDEOS.filter(v => {
       const matchesSearch = v.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           v.channelName.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = activeCategory === 'all' || v.category === activeCategory;
-      return matchesSearch && matchesCategory;
+      const matches = matchesSearch && matchesCategory;
+      
+      if (!matches && searchQuery) {
+        console.log('[DEBUG] App.tsx: Video filtered out:', {
+          title: v.title.substring(0, 50),
+          matchesSearch,
+          matchesCategory
+        });
+      }
+      
+      return matches;
     });
 
-    return [...result].sort((a, b) => {
+    console.log('[DEBUG] App.tsx: After filtering:', {
+      filteredCount: result.length
+    });
+
+    const sorted = [...result].sort((a, b) => {
+      let comparison = 0;
       switch (sortBy) {
         case 'date':
-          return b.uploadDate - a.uploadDate;
+          comparison = b.uploadDate - a.uploadDate;
+          break;
         case 'length':
-          return b.durationSeconds - a.durationSeconds;
+          comparison = b.durationSeconds - a.durationSeconds;
+          break;
         case 'title':
-          return a.title.localeCompare(b.title);
+          comparison = a.title.localeCompare(b.title);
+          break;
         default:
-          return 0;
+          comparison = 0;
       }
+      return comparison;
     });
+
+    console.log('[DEBUG] App.tsx: After sorting:', {
+      sortedCount: sorted.length,
+      firstVideo: sorted[0]?.title?.substring(0, 50) || 'none',
+      lastVideo: sorted[sorted.length - 1]?.title?.substring(0, 50) || 'none'
+    });
+
+    return sorted;
   }, [searchQuery, activeCategory, sortBy]);
 
   const totalPages = Math.ceil(filteredAndSortedVideos.length / VIDEOS_PER_PAGE);
+  console.log('[DEBUG] App.tsx: Pagination info:', {
+    totalVideos: filteredAndSortedVideos.length,
+    videosPerPage: VIDEOS_PER_PAGE,
+    totalPages,
+    currentPage
+  });
   
   const paginatedVideos = useMemo(() => {
     const startIndex = (currentPage - 1) * VIDEOS_PER_PAGE;
-    return filteredAndSortedVideos.slice(startIndex, startIndex + VIDEOS_PER_PAGE);
+    const endIndex = startIndex + VIDEOS_PER_PAGE;
+    const paginated = filteredAndSortedVideos.slice(startIndex, endIndex);
+    
+    console.log('[DEBUG] App.tsx: Paginated videos:', {
+      startIndex,
+      endIndex,
+      paginatedCount: paginated.length,
+      videoIds: paginated.map(v => v.id)
+    });
+    
+    return paginated;
   }, [filteredAndSortedVideos, currentPage]);
 
   const handleVideoSelect = (video: Video) => {
+    console.log('[DEBUG] App.tsx: handleVideoSelect called', {
+      videoId: video.id,
+      videoTitle: video.title.substring(0, 50),
+      youtubeId: video.youtubeId
+    });
     setSelectedVideo(video);
+    console.log('[DEBUG] App.tsx: selectedVideo state updated');
   };
 
   const handleHomeClick = () => {
+    console.log('[DEBUG] App.tsx: handleHomeClick called - resetting to home');
     setSelectedVideo(null);
     setActiveCategory('all');
     setSearchQuery('');
     setCurrentPage(1);
+    console.log('[DEBUG] App.tsx: All state reset to defaults');
   };
+
+  console.log('[DEBUG] App.tsx: Rendering JSX', {
+    hasSelectedVideo: !!selectedVideo,
+    paginatedVideosCount: paginatedVideos.length,
+    totalPages
+  });
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-primary selection:text-black">
       <Header 
-        onSearch={setSearchQuery} 
+        onSearch={(query) => {
+          console.log('[DEBUG] App.tsx: Search query changed from Header:', query);
+          setSearchQuery(query);
+        }}
         onHomeClick={handleHomeClick}
         sortBy={sortBy}
-        onSortChange={setSortBy}
+        onSortChange={(sort) => {
+          console.log('[DEBUG] App.tsx: Sort changed from Header:', sort);
+          setSortBy(sort);
+        }}
       />
       
       <div className="pt-14">
@@ -87,7 +173,14 @@ const App: React.FC = () => {
                   {totalPages > 1 && (
                     <div className="flex items-center justify-center gap-6 py-8 border-t border-zinc-900 mt-10">
                       <button
-                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        onClick={() => {
+                          console.log('[DEBUG] App.tsx: Previous page clicked, current:', currentPage);
+                          setCurrentPage(p => {
+                            const newPage = Math.max(1, p - 1);
+                            console.log('[DEBUG] App.tsx: Previous page set to:', newPage);
+                            return newPage;
+                          });
+                        }}
                         disabled={currentPage === 1}
                         className="w-12 h-12 flex items-center justify-center rounded-2xl bg-zinc-900 border border-zinc-800 disabled:opacity-20 disabled:cursor-not-allowed hover:bg-zinc-800 transition-all hover:scale-110 active:scale-95"
                       >
@@ -106,7 +199,11 @@ const App: React.FC = () => {
                           return (
                             <button
                               key={pageNum}
-                              onClick={() => setCurrentPage(pageNum)}
+                              onClick={() => {
+                                console.log('[DEBUG] App.tsx: Page number clicked:', pageNum, 'current:', currentPage);
+                                setCurrentPage(pageNum);
+                                console.log('[DEBUG] App.tsx: Page set to:', pageNum);
+                              }}
                               className={`w-12 h-12 rounded-2xl text-sm font-black transition-all ${
                                 currentPage === pageNum 
                                   ? 'bg-primary text-black shadow-[0_0_20px_rgba(37,150,190,0.3)]' 
@@ -120,7 +217,14 @@ const App: React.FC = () => {
                       </div>
 
                       <button
-                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        onClick={() => {
+                          console.log('[DEBUG] App.tsx: Next page clicked, current:', currentPage, 'totalPages:', totalPages);
+                          setCurrentPage(p => {
+                            const newPage = Math.min(totalPages, p + 1);
+                            console.log('[DEBUG] App.tsx: Next page set to:', newPage);
+                            return newPage;
+                          });
+                        }}
                         disabled={currentPage === totalPages}
                         className="w-12 h-12 flex items-center justify-center rounded-2xl bg-zinc-900 border border-zinc-800 disabled:opacity-20 disabled:cursor-not-allowed hover:bg-zinc-800 transition-all hover:scale-110 active:scale-95"
                       >

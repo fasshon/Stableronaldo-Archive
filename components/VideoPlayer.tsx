@@ -10,9 +10,23 @@ interface VideoPlayerProps {
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ video, relatedVideos, onVideoSelect }) => {
+  console.log('[DEBUG] VideoPlayer: Component rendering', {
+    videoId: video.id,
+    videoTitle: video.title.substring(0, 50),
+    youtubeId: video.youtubeId,
+    relatedVideosCount: relatedVideos.length
+  });
+
   React.useEffect(() => {
+    console.log('[DEBUG] VideoPlayer: useEffect - video changed, scrolling to top', {
+      videoId: video.id
+    });
     window.scrollTo(0, 0);
+    console.log('[DEBUG] VideoPlayer: Scroll complete');
   }, [video]);
+
+  const embedUrl = `https://www.youtube.com/embed/${video.youtubeId}?autoplay=1`;
+  console.log('[DEBUG] VideoPlayer: Embed URL:', embedUrl);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in duration-500">
@@ -21,11 +35,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ video, relatedVideos, onVideo
         <div className="relative aspect-video rounded-2xl overflow-hidden bg-black border border-zinc-800 shadow-2xl">
           <iframe
             className="absolute inset-0 w-full h-full"
-            src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=1`}
+            src={embedUrl}
             title={video.title}
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
+            onLoad={() => console.log('[DEBUG] VideoPlayer: iframe loaded successfully')}
+            onError={(e) => console.error('[DEBUG] VideoPlayer: iframe error:', e)}
           ></iframe>
         </div>
 
@@ -90,7 +106,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ video, relatedVideos, onVideo
           <div 
             key={v.id} 
             className="flex gap-3 group cursor-pointer"
-            onClick={() => onVideoSelect(v)}
+            onClick={() => {
+              console.log('[DEBUG] VideoPlayer: Related video clicked', {
+                videoId: v.id,
+                videoTitle: v.title.substring(0, 50),
+                youtubeId: v.youtubeId
+              });
+              onVideoSelect(v);
+            }}
           >
             <div className="relative w-40 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-zinc-800">
               <img src={v.thumbnail} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="" />

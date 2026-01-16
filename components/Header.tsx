@@ -11,18 +11,33 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onSearch, onHomeClick, sortBy, onSortChange }) => {
+  console.log('[DEBUG] Header: Component rendering', {
+    sortBy,
+    hasOnSearch: !!onSearch,
+    hasOnHomeClick: !!onHomeClick
+  });
+
   const [searchValue, setSearchValue] = useState('');
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('[DEBUG] Header: Search form submitted', {
+      searchValue,
+      searchValueLength: searchValue.length
+    });
     onSearch(searchValue);
+    console.log('[DEBUG] Header: onSearch callback called');
   };
 
   return (
     <header className="fixed top-0 left-0 right-0 h-14 bg-black flex items-center justify-between px-4 z-50 border-b border-zinc-800">
       <div className="flex items-center gap-2">
         <div 
-          onClick={onHomeClick}
+          onClick={() => {
+            console.log('[DEBUG] Header: Home logo clicked');
+            onHomeClick();
+            console.log('[DEBUG] Header: onHomeClick callback called');
+          }}
           className="flex items-center gap-2 cursor-pointer select-none group"
         >
           <div className="w-10 h-10 flex items-center justify-center overflow-hidden rounded-lg group-hover:bg-primary/10 transition-colors">
@@ -41,7 +56,15 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onHomeClick, sortBy, onSortCh
           {(['date', 'length', 'title'] as SortOption[]).map((option) => (
             <button
               key={option}
-              onClick={() => onSortChange(option)}
+              onClick={() => {
+                console.log('[DEBUG] Header: Sort option clicked', {
+                  option,
+                  currentSortBy: sortBy,
+                  willChange: sortBy !== option
+                });
+                onSortChange(option);
+                console.log('[DEBUG] Header: onSortChange callback called');
+              }}
               className={`px-3 py-1 rounded-full text-[9px] font-black tracking-widest uppercase transition-all ${
                 sortBy === option 
                   ? 'bg-white text-black' 
@@ -63,7 +86,17 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onHomeClick, sortBy, onSortCh
               placeholder="Search archives"
               className="bg-transparent flex-1 py-1 text-sm focus:outline-none text-white"
               value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
+              onChange={(e) => {
+                const newValue = e.target.value;
+                console.log('[DEBUG] Header: Search input changed', {
+                  oldValue: searchValue,
+                  newValue,
+                  length: newValue.length
+                });
+                setSearchValue(newValue);
+              }}
+              onFocus={() => console.log('[DEBUG] Header: Search input focused')}
+              onBlur={() => console.log('[DEBUG] Header: Search input blurred')}
             />
           </div>
           <button className="bg-zinc-800 border-y border-r border-zinc-700 rounded-r-full px-4 hover:bg-zinc-700 transition-colors">
