@@ -37,6 +37,15 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: npm run build
 
+      - name: Copy CNAME to dist
+        run: |
+          if [ -f CNAME ]; then
+            cp CNAME dist/CNAME
+            echo "CNAME file copied to dist folder"
+          else
+            echo "No CNAME file found"
+          fi
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
