@@ -83,17 +83,34 @@ const App: React.FC = () => {
           comparison = 0;
       }
       // Reverse if ascending direction
-      return sortDirection === 'asc' ? -comparison : comparison;
+      const finalComparison = sortDirection === 'asc' ? -comparison : comparison;
+      
+      // Debug first few comparisons
+      if (result.indexOf(a) < 3 && result.indexOf(b) < 3) {
+        console.log('[DEBUG] App.tsx: Sorting comparison', {
+          sortBy,
+          sortDirection,
+          aTitle: a.title.substring(0, 30),
+          bTitle: b.title.substring(0, 30),
+          comparison,
+          finalComparison,
+          aValue: sortBy === 'date' ? a.uploadDate : sortBy === 'length' ? a.durationSeconds : a.title,
+          bValue: sortBy === 'date' ? b.uploadDate : sortBy === 'length' ? b.durationSeconds : b.title
+        });
+      }
+      
+      return finalComparison;
     });
 
     console.log('[DEBUG] App.tsx: After sorting:', {
       sortedCount: sorted.length,
       firstVideo: sorted[0]?.title?.substring(0, 50) || 'none',
-      lastVideo: sorted[sorted.length - 1]?.title?.substring(0, 50) || 'none'
+      lastVideo: sorted[sorted.length - 1]?.title?.substring(0, 50) || 'none',
+      sortDirection
     });
 
     return sorted;
-  }, [searchQuery, activeCategory, sortBy]);
+  }, [searchQuery, activeCategory, sortBy, sortDirection]);
 
   const totalPages = Math.ceil(filteredAndSortedVideos.length / VIDEOS_PER_PAGE);
   console.log('[DEBUG] App.tsx: Pagination info:', {
