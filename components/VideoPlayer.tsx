@@ -60,6 +60,34 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ video, relatedVideos, onVideo
           </div>
         </div>
       </div>
+
+      <div className="space-y-4">
+        <h2 className="text-lg font-bold">Up Next</h2>
+        {relatedVideos.map((v) => (
+          <div 
+            key={v.id} 
+            className="flex gap-3 group cursor-pointer"
+            onClick={() => {
+              console.log('[DEBUG] VideoPlayer: Related video clicked', {
+                videoId: v.id,
+                videoTitle: v.title.substring(0, 50),
+                youtubeId: v.youtubeId
+              });
+              onVideoSelect(v);
+            }}
+          >
+            <div className="relative w-40 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-zinc-800">
+              <img src={v.thumbnail} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="" />
+              <div className="absolute bottom-1 right-1 bg-black/80 text-[10px] px-1 rounded">{v.duration}</div>
+            </div>
+            <div className="flex flex-col gap-1 min-w-0">
+              <h3 className="text-sm font-bold line-clamp-2 leading-tight group-hover:text-primary transition-colors">{v.title}</h3>
+              <p className="text-xs text-zinc-400 truncate">{v.channelName}</p>
+              <p className="text-xs text-zinc-500">{v.views} • {v.postedAt}</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
