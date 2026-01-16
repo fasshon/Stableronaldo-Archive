@@ -48,41 +48,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ video, relatedVideos, onVideo
         <div className="space-y-4">
           <h1 className="text-xl md:text-2xl font-bold line-clamp-2">{video.title}</h1>
           
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2">
-            <div className="flex items-center gap-3">
-              <img src={video.channelAvatar} className="w-10 h-10 rounded-full border border-primary/20" alt="" />
-              <div>
-                <h3 className="font-bold text-base flex items-center gap-1">
-                  {video.channelName}
-                  <Sparkles className="w-3 h-3 text-primary fill-primary/20" />
-                </h3>
-                <p className="text-xs text-zinc-400">1.2M subscribers</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0">
-              <div className="flex items-center bg-zinc-800 rounded-full">
-                <button className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-700 transition-colors border-r border-zinc-700 rounded-l-full">
-                  <ThumbsUp className="w-5 h-5" />
-                  <span className="text-sm font-medium">124K</span>
-                </button>
-                <button className="px-4 py-2 hover:bg-zinc-700 transition-colors rounded-r-full">
-                  <ThumbsDown className="w-5 h-5" />
-                </button>
-              </div>
-              <button className="flex items-center gap-2 bg-zinc-800 px-4 py-2 rounded-full hover:bg-zinc-700 transition-colors">
-                <Share2 className="w-5 h-5" />
-                <span className="text-sm font-medium">Share</span>
-              </button>
-              <button className="flex items-center gap-2 bg-zinc-800 px-4 py-2 rounded-full hover:bg-zinc-700 transition-colors hidden sm:flex">
-                <Download className="w-5 h-5" />
-                <span className="text-sm font-medium">Download</span>
-              </button>
-              <button className="p-2 bg-zinc-800 rounded-full hover:bg-zinc-700 transition-colors">
-                <MoreHorizontal className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
 
           <div className="bg-zinc-900 rounded-2xl p-4 space-y-3">
             <div className="flex items-center gap-3 text-sm font-semibold">
