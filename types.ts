@@ -21,3 +21,4 @@ export interface Category {
 }
 
 export type SortOption = 'date' | 'length' | 'title';
+export type SortDirection = 'asc' | 'desc';

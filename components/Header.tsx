@@ -1,18 +1,20 @@
 
 import React, { useState } from 'react';
-import { Search, Mic, Bug, ArrowUpDown } from 'lucide-react';
-import { SortOption } from '../types';
+import { Search, Mic, Bug, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { SortOption, SortDirection } from '../types';
 
 interface HeaderProps {
   onSearch: (query: string) => void;
   onHomeClick: () => void;
   sortBy: SortOption;
-  onSortChange: (sort: SortOption) => void;
+  sortDirection: SortDirection;
+  onSortChange: (sort: SortOption, direction: SortDirection) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onSearch, onHomeClick, sortBy, onSortChange }) => {
+const Header: React.FC<HeaderProps> = ({ onSearch, onHomeClick, sortBy, sortDirection, onSortChange }) => {
   console.log('[DEBUG] Header: Component rendering', {
     sortBy,
+    sortDirection,
     hasOnSearch: !!onSearch,
     hasOnHomeClick: !!onHomeClick
   });
@@ -50,30 +52,49 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onHomeClick, sortBy, onSortCh
           <span className="text-xl font-black tracking-tighter">Stable<span className="text-primary">Vods</span></span>
         </div>
         <div className="flex items-center gap-1 bg-zinc-900 p-1 rounded-full border border-zinc-800 hidden md:flex ml-5">
-          <div className="pl-2 pr-1.5 text-zinc-600">
-            <ArrowUpDown className="w-3.5 h-3.5" />
-          </div>
-          {(['date', 'length', 'title'] as SortOption[]).map((option) => (
-            <button
-              key={option}
-              onClick={() => {
-                console.log('[DEBUG] Header: Sort option clicked', {
-                  option,
-                  currentSortBy: sortBy,
-                  willChange: sortBy !== option
-                });
-                onSortChange(option);
-                console.log('[DEBUG] Header: onSortChange callback called');
-              }}
-              className={`px-3 py-1 rounded-full text-[9px] font-black tracking-widest uppercase transition-all ${
-                sortBy === option 
-                  ? 'bg-white text-black' 
-                  : 'text-zinc-500 hover:text-zinc-300'
-              }`}
-            >
-              {option}
-            </button>
-          ))}
+          {(['date', 'length', 'title'] as SortOption[]).map((option) => {
+            const isActive = sortBy === option;
+            const showArrow = isActive;
+            const ArrowIcon = sortDirection === 'asc' ? ArrowUp : ArrowDown;
+            
+            return (
+              <button
+                key={option}
+                onClick={() => {
+                  console.log('[DEBUG] Header: Sort option clicked', {
+                    option,
+                    currentSortBy: sortBy,
+                    currentDirection: sortDirection,
+                    isActive
+                  });
+                  
+                  if (isActive) {
+                    // Toggle direction if already active
+                    const newDirection: SortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                    console.log('[DEBUG] Header: Toggling sort direction to:', newDirection);
+                    onSortChange(option, newDirection);
+                  } else {
+                    // Switch to new sort option with default direction
+                    // Default: date=desc (newest first), length=desc (longest first), title=asc (A-Z)
+                    const defaultDirection: SortDirection = option === 'title' ? 'asc' : 'desc';
+                    console.log('[DEBUG] Header: Switching to new sort with default direction:', defaultDirection);
+                    onSortChange(option, defaultDirection);
+                  }
+                  console.log('[DEBUG] Header: onSortChange callback called');
+                }}
+                className={`px-3 py-1 rounded-full text-[9px] font-black tracking-widest uppercase transition-all flex items-center gap-1 ${
+                  isActive 
+                    ? 'bg-white text-black' 
+                    : 'text-zinc-500 hover:text-zinc-300'
+                }`}
+              >
+                {option}
+                {showArrow && (
+                  <ArrowIcon className="w-3 h-3" />
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 

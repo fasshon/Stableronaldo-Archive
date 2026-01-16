@@ -3,7 +3,7 @@ import Header from './components/Header';
 import VideoCard from './components/VideoCard';
 import VideoPlayer from './components/VideoPlayer';
 import { INITIAL_VIDEOS } from './constants';
-import { Video, SortOption } from './types';
+import { Video, SortOption, SortDirection } from './types';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const VIDEOS_PER_PAGE = 30; // 5 columns x 6 rows
@@ -15,6 +15,7 @@ const App: React.FC = () => {
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('date');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [currentPage, setCurrentPage] = useState(1);
 
   console.log('[DEBUG] App.tsx: Initial state -', {
@@ -22,6 +23,7 @@ const App: React.FC = () => {
     selectedVideo: selectedVideo?.id || null,
     searchQuery,
     sortBy,
+    sortDirection,
     currentPage
   });
 
@@ -29,11 +31,12 @@ const App: React.FC = () => {
     console.log('[DEBUG] App.tsx: useEffect triggered - filters changed', {
       searchQuery,
       activeCategory,
-      sortBy
+      sortBy,
+      sortDirection
     });
     setCurrentPage(1);
     console.log('[DEBUG] App.tsx: Reset currentPage to 1');
-  }, [searchQuery, activeCategory, sortBy]);
+  }, [searchQuery, activeCategory, sortBy, sortDirection]);
 
   const filteredAndSortedVideos = useMemo(() => {
     console.log('[DEBUG] App.tsx: useMemo - filtering and sorting videos', {
@@ -79,7 +82,8 @@ const App: React.FC = () => {
         default:
           comparison = 0;
       }
-      return comparison;
+      // Reverse if ascending direction
+      return sortDirection === 'asc' ? -comparison : comparison;
     });
 
     console.log('[DEBUG] App.tsx: After sorting:', {
@@ -148,9 +152,11 @@ const App: React.FC = () => {
         }}
         onHomeClick={handleHomeClick}
         sortBy={sortBy}
-        onSortChange={(sort) => {
-          console.log('[DEBUG] App.tsx: Sort changed from Header:', sort);
+        sortDirection={sortDirection}
+        onSortChange={(sort, direction) => {
+          console.log('[DEBUG] App.tsx: Sort changed from Header:', { sort, direction });
           setSortBy(sort);
+          setSortDirection(direction);
         }}
       />
       
