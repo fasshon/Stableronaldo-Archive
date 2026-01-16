@@ -102,9 +102,6 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onHomeClick, sortBy, onSortCh
           <button className="bg-zinc-800 border-y border-r border-zinc-700 rounded-r-full px-4 hover:bg-zinc-700 transition-colors">
             <Search className="w-4 h-4" />
           </button>
-          <button type="button" className="ml-2 p-2 bg-zinc-900 hover:bg-zinc-800 rounded-full transition-colors">
-            <Mic className="w-4 h-4" />
-          </button>
         </form>
       </div>
 

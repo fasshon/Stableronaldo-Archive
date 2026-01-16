@@ -58,9 +58,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ video, relatedVideos, onVideo
                 </h3>
                 <p className="text-xs text-zinc-400">1.2M subscribers</p>
               </div>
-              <button className="ml-4 px-4 py-2 bg-white text-black text-sm font-semibold rounded-full hover:bg-zinc-200 transition-colors">
-                Subscribe
-              </button>
             </div>
 
             <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0">
@@ -95,7 +92,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ video, relatedVideos, onVideo
             <p className="text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">
               {video.description}
             </p>
-            <button className="text-sm font-semibold hover:text-primary">Show more</button>
           </div>
         </div>
       </div>
