@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Search, Mic, Bug, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Search, Mic, Bug, ArrowUpDown, ArrowUp, ArrowDown, Radio } from 'lucide-react';
 import { SortOption, SortDirection } from '../types';
 
 interface HeaderProps {
@@ -9,12 +9,17 @@ interface HeaderProps {
   sortBy: SortOption;
   sortDirection: SortDirection;
   onSortChange: (sort: SortOption, direction: SortDirection) => void;
+  isLive: boolean;
+  showLiveView: boolean;
+  onLiveViewChange: (show: boolean) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onSearch, onHomeClick, sortBy, sortDirection, onSortChange }) => {
+const Header: React.FC<HeaderProps> = ({ onSearch, onHomeClick, sortBy, sortDirection, onSortChange, isLive, showLiveView, onLiveViewChange }) => {
   console.log('[DEBUG] Header: Component rendering', {
     sortBy,
     sortDirection,
+    isLive,
+    showLiveView,
     hasOnSearch: !!onSearch,
     hasOnHomeClick: !!onHomeClick
   });
@@ -51,6 +56,22 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onHomeClick, sortBy, sortDire
           </div>
           <span className="text-xl font-black tracking-tighter">Stable<span className="text-primary">Vods</span></span>
         </div>
+        {isLive && (
+          <button
+            onClick={() => {
+              console.log('[DEBUG] Header: Live tab clicked', { showLiveView, isLive });
+              onLiveViewChange(!showLiveView);
+            }}
+            className={`px-4 py-1.5 rounded-full text-[9px] font-black tracking-widest uppercase transition-all flex items-center gap-2 hidden md:flex ml-5 ${
+              showLiveView
+                ? 'bg-purple-600 text-white'
+                : 'bg-red-600 text-white animate-pulse'
+            }`}
+          >
+            <Radio className="w-3 h-3" />
+            <span>LIVE</span>
+          </button>
+        )}
         <div className="flex items-center gap-1 bg-zinc-900 p-1 rounded-full border border-zinc-800 hidden md:flex ml-5">
           {(['date', 'length', 'title'] as SortOption[]).map((option) => {
             const isActive = sortBy === option;

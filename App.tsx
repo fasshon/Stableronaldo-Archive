@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Header from './components/Header';
 import VideoCard from './components/VideoCard';
 import VideoPlayer from './components/VideoPlayer';
+import TwitchEmbed from './components/TwitchEmbed';
 import { INITIAL_VIDEOS } from './constants';
 import { Video, SortOption, SortDirection } from './types';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -17,6 +18,8 @@ const App: React.FC = () => {
   const [sortBy, setSortBy] = useState<SortOption>('date');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLive, setIsLive] = useState(false);
+  const [showLiveView, setShowLiveView] = useState(false);
 
   console.log('[DEBUG] App.tsx: Initial state -', {
     activeCategory,
@@ -26,6 +29,32 @@ const App: React.FC = () => {
     sortDirection,
     currentPage
   });
+
+  // Check live status
+  useEffect(() => {
+    const checkLiveStatus = async () => {
+      try {
+        console.log('[DEBUG] App.tsx: Checking live status');
+        const response = await fetch('https://www.henrikhjelm.se/api/twitch.php?user=stableronaldo');
+        const data = await response.json();
+        console.log('[DEBUG] App.tsx: Live status response:', data);
+        
+        const nowLive = data.live === 'yes';
+        setIsLive(nowLive);
+        console.log('[DEBUG] App.tsx: Live status updated:', nowLive);
+      } catch (error) {
+        console.error('[DEBUG] App.tsx: Error checking live status:', error);
+      }
+    };
+
+    // Check immediately
+    checkLiveStatus();
+    
+    // Check every 60 seconds
+    const interval = setInterval(checkLiveStatus, 60000);
+    
+    return () => clearInterval(interval);
+  }, [isLive]);
 
   useEffect(() => {
     console.log('[DEBUG] App.tsx: useEffect triggered - filters changed', {
@@ -151,8 +180,10 @@ const App: React.FC = () => {
     setActiveCategory('all');
     setSearchQuery('');
     setCurrentPage(1);
+    setShowLiveView(false);
     console.log('[DEBUG] App.tsx: All state reset to defaults');
   };
+
 
   console.log('[DEBUG] App.tsx: Rendering JSX', {
     hasSelectedVideo: !!selectedVideo,
@@ -175,11 +206,16 @@ const App: React.FC = () => {
           setSortBy(sort);
           setSortDirection(direction);
         }}
+        isLive={isLive}
+        showLiveView={showLiveView}
+        onLiveViewChange={setShowLiveView}
       />
       
       <div className="pt-14">
         <main className="max-w-[2200px] mx-auto p-4 md:p-10">
-          {!selectedVideo ? (
+          {showLiveView ? (
+            <TwitchEmbed channel="stableronaldo" />
+          ) : !selectedVideo ? (
             <div className="space-y-10">
               {paginatedVideos.length > 0 ? (
                 <>

@@ -269,8 +269,7 @@ const rawData = [
 {"title": "5 FEB - GTA 5 RP & Sky Zone W/ PlaqueBoyMax FULL STREAM!", "url": "https://www.youtube.com/watch?v=S_b--FN1sI8", "duration": 33209, "upload_date": "20250206"},
 {"title": "2 FEB - Stable Ronaldo & xQc Play Hardcore Minecraft Until They Beat It FULL STREAM!", "url": "https://www.youtube.com/watch?v=an-EZG7JQLQ", "duration": 19904, "upload_date": "20250203"},
 {"title": "26 JAN - FaZe Investigation & Minecraft Night FULL Stream!", "url": "https://www.youtube.com/watch?v=Xx4ICnYTfD0", "duration": 32429, "upload_date": "20250127"},
-{"title": "25 JAN - Stable Ronaldo & JasonTheWeen FULL Stream!", "url": "https://www.youtube.com/watch?v=pZeQOZCZY54", "duration": 17631, "upload_date": "20250126"},
-
+{"title": "25 JAN - Stable Ronaldo & JasonTheWeen FULL Stream!", "url": "https://www.youtube.com/watch?v=pZeQOZCZY54", "duration": 17631, "upload_date": "20250126"}
 ];
 
 // Helper to extract a date string "YYYY-MM-DD" from titles
