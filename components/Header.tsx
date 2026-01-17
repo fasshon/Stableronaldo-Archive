@@ -76,9 +76,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onHomeClick, sortBy, sortDire
           {(['date', 'length', 'title'] as SortOption[]).map((option) => {
             const isActive = sortBy === option;
             const showArrow = isActive;
-            // Only use sortDirection for the active option
-            const currentDirection = isActive ? sortDirection : (option === 'title' ? 'asc' : 'desc');
-            const ArrowIcon = currentDirection === 'asc' ? ArrowUp : ArrowDown;
+            const ArrowIcon = sortDirection === 'asc' ? ArrowUp : ArrowDown;
             
             return (
               <button
@@ -88,28 +86,19 @@ const Header: React.FC<HeaderProps> = ({ onSearch, onHomeClick, sortBy, sortDire
                     option,
                     currentSortBy: sortBy,
                     currentDirection: sortDirection,
-                    isActive,
-                    willToggle: isActive
+                    isActive
                   });
                   
                   if (isActive) {
                     // Toggle direction if already active
                     const newDirection: SortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-                    console.log('[DEBUG] Header: Toggling sort direction', {
-                      from: sortDirection,
-                      to: newDirection,
-                      option
-                    });
+                    console.log('[DEBUG] Header: Toggling sort direction to:', newDirection);
                     onSortChange(option, newDirection);
                   } else {
                     // Switch to new sort option with default direction
                     // Default: date=desc (newest first), length=desc (longest first), title=asc (A-Z)
                     const defaultDirection: SortDirection = option === 'title' ? 'asc' : 'desc';
-                    console.log('[DEBUG] Header: Switching to new sort', {
-                      from: sortBy,
-                      to: option,
-                      defaultDirection
-                    });
+                    console.log('[DEBUG] Header: Switching to new sort with default direction:', defaultDirection);
                     onSortChange(option, defaultDirection);
                   }
                   console.log('[DEBUG] Header: onSortChange callback called');
