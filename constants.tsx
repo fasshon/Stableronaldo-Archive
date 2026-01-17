@@ -20,6 +20,7 @@ const extractYoutubeId = (url: string): string => {
 
 // Raw list provided by the user
 const rawData = [
+  {"title": "16 JAN - Getting A Makeover W/ Marlon FULL Stream!", "url": "https://www.youtube.com/watch?v=Qkq66UUO_Jk", "duration": 31464, "upload_date": "20260117"},
   {"title": "[2025-12-17] FAZEMAS DAY 4  CINNA VS RON FORTNITE 99 KILL LEADWINNING THE LOTTERY  FAZE HOCKEY ", "url": "https://www.youtube.com/watch?v=ee1EEgIbCQ4", "duration": 34944, "upload_date": "20251218"},
 {"title": "[2025-12-16]  FAZEMAS DAY 3  JYNXZI VS RON & CLIX R6 $10,000 WAGER  FAZE VR GAME NIGHT ", "url": "https://www.youtube.com/watch?v=XwNRqdGKRzo", "duration": 28195, "upload_date": "20251217"},
 {"title": "[2025-12-15]  FAZEMAS DAY 2  SHOPPING FOR MARLON  IRL  FAZE WAR  R6 PRACTICE ", "url": "https://www.youtube.com/watch?v=qbd9Iargg3U", "duration": 31664, "upload_date": "20251216"},
