@@ -122,7 +122,7 @@ const App: React.FC = () => {
     });
 
     return sorted;
-  }, [searchQuery, activeCategory, sortBy]);
+  }, [searchQuery, activeCategory, sortBy, sortDirection]);
 
   const totalPages = Math.ceil(filteredAndSortedVideos.length / VIDEOS_PER_PAGE);
   console.log('[DEBUG] App.tsx: Pagination info:', {
