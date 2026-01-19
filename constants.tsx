@@ -20,11 +20,20 @@ const extractYoutubeId = (url: string): string => {
 
 // Raw list provided by the user
 const rawData = [
+
   {"title": "[2026-1-16] - Getting A Makeover W/ Marlon FULL Stream!", "url": "https://www.youtube.com/watch?v=cdaaM25bbfg", "duration": 31464, "upload_date": "20260117"},
   {"title": "[2026-01-15] Birthday Party FULL Stream!", "url": "https://www.youtube.com/watch?v=XrWzATP7fMw", "duration": 31464, "upload_date": "20260115"},
 {"title": "[2026-01-14]  Elden Ring DLC Marathon FULL Stream! Part 6", "url": "https://www.youtube.com/watch?v=p0Iwtv9XTX0", "duration": 43198, "upload_date": "20260114" },
 {"title": "[2026-01-13] Elden Ring DLC Marathon FULL Stream! Part 5", "url": "https://www.youtube.com/watch?v=TqzSYkK3LXE", "duration": 6726, "upload_date": "20260113" },
 {"title": "[2026-01-13] Elden Ring DLC Marathon FULL Stream! Part 4", "url": "https://www.youtube.com/watch?v=Uy8AUEUCo7g", "duration": 41435, "upload_date": "20260112" },
+{"title": "[2026-01-12] Elden Ring DLC Marathon FULL Stream! Part 2", "url": "https://www.youtube.com/watch?v=cYprSPjYhC8", "duration": 41435, "upload_date": "20260111" },
+{"title": "[2026-01-12] Elden Ring DLC Marathon FULL Stream! Part 1", "url": "https://www.youtube.com/watch?v=DXy8Xl6pRRY", "duration": 41435, "upload_date": "20260110" },
+{"title": "[2026-01-11] Announcing The Elden Ring DLC Marathon FULL Stream!", "url": "https://www.youtube.com/watch?v=b_PBbG9AgIM", "duration": 41435, "upload_date": "20260109" },
+{"title": "[2026-01-09] $10,000 Fortnite Wager Vs Rakai FULL Stream!", "url": "https://www.youtube.com/watch?v=-tF2qw_ZwiM", "duration": 41435, "upload_date": "20260108" },
+{"title": "[2026-01-08] Clover Boys War FULL Stream!", "url": "ttps://www.youtube.com/watch?v=WxJJZU_wCpI", "duration": 41435, "upload_date": "20260107" },
+{"title": "[2026-01-07] Revealing My Birthday Present FULL Stream!", "url": "https://www.youtube.com/watch?v=7gTqJ7WxKmQ", "duration": 41435, "upload_date": "20260106" },
+{"title": "[2026-01-06] MrBeast's Premiere W⧸ JasonTheWeen, Marlon, Lacy & More FULL Stream!", "url": "https://www.youtube.com/watch?v=lf_jEeSbKWY", "duration": 41435, "upload_date": "20260105" },
+{"title": "[2026-01-05] Touring a $100M House In New York City W⧸ Adin Ross & Cuffem FULL Stream!", "url": "https://www.youtube.com/watch?v=3lChaXo900Y", "duration": 41435, "upload_date": "20260104" },
 {"title": "[2025-12-17] FAZEMAS DAY 4  CINNA VS RON FORTNITE 99 KILL LEADWINNING THE LOTTERY  FAZE HOCKEY ", "url": "https://www.youtube.com/watch?v=ee1EEgIbCQ4", "duration": 34944, "upload_date": "20251218"},
 {"title": "[2025-12-16]  FAZEMAS DAY 3  JYNXZI VS RON & CLIX R6 $10,000 WAGER  FAZE VR GAME NIGHT ", "url": "https://www.youtube.com/watch?v=XwNRqdGKRzo", "duration": 28195, "upload_date": "20251217"},
 {"title": "[2025-12-15]  FAZEMAS DAY 2  SHOPPING FOR MARLON  IRL  FAZE WAR  R6 PRACTICE ", "url": "https://www.youtube.com/watch?v=qbd9Iargg3U", "duration": 31664, "upload_date": "20251216"},
